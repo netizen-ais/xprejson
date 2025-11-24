@@ -339,8 +339,6 @@ button {
 					host.input[key] = parsed;
 					host.textContent = JSON.stringify(host.input);
 					host.setAttribute("modified", key);
-					// let environment know input changed
-					host.dispatchEvent(new Event("input"));
 				}
 			};
 			container.addEventListener("input", onInput);
@@ -651,6 +649,9 @@ button {
 		if (parentHost && parentHost instanceof xPreJSON && myKey) {
 			// parentHost expects the child's key (myKey) and the child's full value
 			parentHost.handleChildUpdate(myKey, this.input);
+		} else {
+			// notify any listeners that this x-pre-json changed
+			this.dispatchEvent(new Event("input", { bubbles: true }));
 		}
 	}
 
