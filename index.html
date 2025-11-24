@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pretty JSON Custom Element Demo</title>
+    <script defer type="module" src="xprejson.js"></script>
+    <script defer type="module">
+      // Automatically generate examples from from examples.js
+      import { TEST_CASES } from "./examples.js";
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const examplesTitle = document.createElement("h1");
+        examplesTitle.textContent = "Examples";
+        document.body.appendChild(examplesTitle);
+        const p = document.createElement("p");
+        p.textContent =
+          "The following examples are generated from the examples.js file. Each example shows a JSON object and the corresponding <x-pre-json> element.";
+        document.body.appendChild(p);
+
+        for (const testCase of TEST_CASES) {
+          const container = document.createElement("div");
+          container.className = "example";
+
+          const title = document.createElement("h2");
+          title.textContent = testCase.name;
+          container.appendChild(title);
+
+          if (testCase.description) {
+            const description = document.createElement("p");
+            description.textContent = testCase.description;
+            container.appendChild(description);
+          }
+
+          const pre = document.createElement("pre");
+          const json = JSON.stringify(testCase.value, null, 4);
+
+          const attributes = testCase.attributes
+            ? ` ${testCase.attributes
+                .map(([key, value]) => `${key}="${value}"`)
+                .join(" ")}`
+            : "";
+          pre.textContent = `<x-pre-json${attributes}>\n${
+            json.slice(0, 300).trim() + (json.length > 300 ? '..."' : "")
+          }\n</x-pre-json>`;
+          container.appendChild(pre);
+
+          const prettyJson = document.createElement("x-pre-json");
+          prettyJson.textContent = JSON.stringify(testCase.value);
+          container.appendChild(prettyJson);
+
+          if (testCase.attributes) {
+            for (const [key, value] of testCase.attributes) {
+              prettyJson.setAttribute(key, value);
+            }
+          }
+
+          document.body.appendChild(container);
+        }
+      });
+      // Shiki code highlighting
+      // This is done in a script tag because of a limitation in Parcel
+      // See https://github.com/parcel-bundler/parcel/issues/4148
+      const script = document.createElement("script");
+      script.type = "module";
+      script.innerText = `
+      import { codeToHtml } from "https://esm.sh/shiki@1.3.0";
+      const preElements = document.querySelectorAll("pre");
+      Promise.all(
+        Array.from(preElements).map(async (pre) => {
+          pre.innerHTML = await codeToHtml(pre.textContent, {
+            lang: "html",
+            lineWrapping: true,
+            themes: {
+              dark: "github-dark",
+              light: "github-light",
+            },
+          });
+        })
+      );`;
+      document.head.appendChild(script);
+    </script>
+
+    <style>
+      :root {
+        --code-bg-color: #f8f8f8;
+        --color-dim-bg-color: #dadada;
+        --color-text-color: #000000;
+      }
+      @media screen and (prefers-color-scheme: dark) {
+        :root {
+          --code-bg-color: #000000;
+          --color-dim-bg-color: #1d1d1d;
+          --color-text-color: #ffffff;
+        }
+      }
+      body {
+        background-color: var(--code-bg-color);
+        max-width: 80ch;
+        margin-left: auto;
+        padding: 1rem;
+        margin-right: auto;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+      }
+      * {
+        color: var(--color-text-color);
+      }
+      details summary {
+        cursor: pointer;
+      }
+      x-pre-json {
+        display: block;
+        margin: 1rem 0;
+      }
+      .example {
+        margin-bottom: 3rem;
+      }
+      pre {
+        padding: 0.5rem;
+      }
+      pre.shiki {
+        white-space: pre-wrap;
+        word-wrap: break-word;
+      }
+      @media (prefers-color-scheme: dark) {
+        .shiki,
+        .shiki span {
+          color: var(--shiki-dark) !important;
+          background-color: var(--shiki-dark-bg) !important;
+          /* Optional, if you also want font styles */
+          font-style: var(--shiki-dark-font-style) !important;
+          font-weight: var(--shiki-dark-font-weight) !important;
+          text-decoration: var(--shiki-dark-text-decoration) !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1 id="x-pre-json-html-custom-element">
+      <code>&lt;x-pre-json&gt;</code> HTML Custom Element
+    </h1>
+
+    <p>
+      <code>&lt;x-pre-json&gt;</code> is an HTML custom element that allows you
+      to render JSON objects in HTML documents with human-readable formatting
+      and expandable interaction for browsing deep JSON structures.
+    </p>
+    <h2>Usage</h2>
+    <p>
+      Include
+      <a href="https://github.com/netizen-ais/xprejson/blob/main/xprejson.js"
+        ><code>xprejson/xprejson.js</code></a>
+      in your HTML page and use the HTML custom element as follows:
+    </p>
+    <pre>
+&lt;script defer type="module" src="https://github.com/netizen-ais/xprejson/xprejson.js"&gt;&lt;/script&gt;
+&lt;x-pre-json&gt;
+  {
+    "hello": "world",
+    "array": [1, 2, 3],
+    "object": {
+      "key": "value"
+    }
+  }
+&lt;/x-pre-json&gt;</pre
+    >
+    <p>Results into:</p>
+    <x-pre-json>
+      { "hello": "world", "array": [1, 2, 3], "object": { "key": "value" } }
+    </x-pre-json>
+    <h2>Documentation</h2>
+    <p>
+      Read the full documentation on
+      <a href="https://github.com/netizen-ais/xprejson">GitHub</a>.
+    </p>
+  </body>
+</html>
