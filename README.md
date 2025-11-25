@@ -1,7 +1,7 @@
 # `<x-pre-json>` JSON viewer/editor Custom HTML Element
 
-`<x-pre-json>` is an HTML custom element that allows you to render JSON objects in HTML documents with human-readable formatting and expandable interaction for browsing deep JSON structures, edit values and sort arrays.
-It's based on [`mohsen1's pretty-json`](https://github.com/mohsen1/pretty-json)
+`<x-pre-json>` is an HTML custom element that allows you to render JSON objects in HTML documents with human-readable formatting and expandable interaction for browsing deep JSON structures, edit values and sort arrays. It uses only plain HTML/CSS/Js and has no dependencies.
+It's based on [`mohsen1's pretty-json`](https://github.com/mohsen1/pretty-json) custom viewer element.
 ## Usage
 
 Include [`index.js`](https://github.com/netizen-ais/xprejson/blob/main/index.js) in your HTML page and use the HTML custom element as follows:
