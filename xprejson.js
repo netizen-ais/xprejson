@@ -39,6 +39,12 @@ class xPreJSON extends HTMLElement {
     isExpanded = true;
 
     /**
+     * Show array size when collapsed.
+     * @type {boolean}
+     */
+    counts = false;
+
+    /**
      * Whether fields are editable by user interaction.
      * @type {boolean}
      */
@@ -49,7 +55,7 @@ class xPreJSON extends HTMLElement {
      * @returns {string[]}
      */
     static get observedAttributes() {
-        return ["expand", "key", "truncate-string", "modified", "editable"];
+        return ["expand", "key", "truncate-string", "modified", "editable", "counts"];
     }
 
     /**
@@ -142,7 +148,8 @@ button {
 }
 
 *::before,
-*::after {
+*::after,
+data[count] {
 	color: var(--symbol-color);
 }
 :host(:not([key]))>.container.object::before {
@@ -176,7 +183,15 @@ button {
 		content: ": {";
 	}
 	.array>&::after {
-		content: ": [";
+		content: ": " attr(count) " [";
+	}
+}
+data[count] {
+	font-size: xx-small;
+	font-style: italic;
+
+	&::before {
+		content: attr(count);
 	}
 }
 .key .arrow {
@@ -535,6 +550,11 @@ button {
             });
             keyElement.addEventListener("click", this.toggle.bind(this));
             container.appendChild(keyElement);
+			if (isArray && this.counts) {
+				const countElement = document.createElement("data");
+				countElement.setAttribute("count", object.length);
+				container.appendChild(countElement);
+			}
         }
 
         if (isArray && (object.length === 0))
@@ -656,6 +676,7 @@ button {
             xPreJSONElement.setAttribute("truncate-string", String(truncateString)); // Set the truncate-string attribute
             xPreJSONElement.setAttribute("key", key);
             xPreJSONElement.setAttribute("editable", self.editable ? "" : "false");
+            xPreJSONElement.setAttribute("counts", self.counts ? "" : "false");
             xPreJSONElement.classList.toggle(
                 "comma",
                 index < Object.keys(object).length - 1,
@@ -776,6 +797,12 @@ button {
         switch (name) {
             case "editable":
 				this.editable = !!this.hasAttribute("editable");
+                this.render();
+                break;
+            case "counts":
+				this.counts = !!this.hasAttribute("counts");
+                this.render();
+                break;
             case "truncate-string":
                 this.render();
                 break;

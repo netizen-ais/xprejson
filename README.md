@@ -39,6 +39,7 @@ Your JSON will be rendered as a human-readable format:
 - Display large JSON objects with expandable and collapsible sections
 - Supports truncating very large strings and arrays with an ellipsis
 - Allows some customization using CSS variables
+- Show element count on arrays
 - Outputs a valid JSON string that can be copied and pasted into a JSON file (in textContent property)
 - Edit values and sort array elements
 
@@ -49,6 +50,14 @@ Your JSON will be rendered as a human-readable format:
 ## Attributes
 
 You can customize the rendering of the JSON object by setting the following attributes on the `<x-pre-json>` element:
+
+### `counts`
+
+Show element count on arrays
+
+```html
+<x-pre-json counts>{a: [0, 1, 2, "foo"]}</x-pre-json>
+```
 
 ### `editable`
 
