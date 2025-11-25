@@ -118,87 +118,87 @@ class xPreJSON extends HTMLElement {
         const variables = this.getCssVariables();
         return `/* css */
 :host {
-    --key-color: ${variables.keyColor};
-    --symbol-color: ${variables.symbolColor};
-    --string-color: ${variables.stringColor};
-    --number-color: ${variables.numberColor};
-    --null-color: ${variables.nullColor};
-    --boolean-color: ${variables.booleanColor};
-    --indent: ${variables.indent};
-    --font-size: ${variables.fontSize};
-    --font-family: ${variables.fontFamily};
+	--key-color: ${variables.keyColor};
+	--symbol-color: ${variables.symbolColor};
+	--string-color: ${variables.stringColor};
+	--number-color: ${variables.numberColor};
+	--null-color: ${variables.nullColor};
+	--boolean-color: ${variables.booleanColor};
+	--indent: ${variables.indent};
+	--font-size: ${variables.fontSize};
+	--font-family: ${variables.fontFamily};
 }
 button {
-    border: none;
-    background: transparent;
-    cursor: pointer;
-    font-family: inherit;
-    font-size: var(--font-size);
-    vertical-align: text-bottom;
+	border: none;
+	background: transparent;
+	cursor: pointer;
+	font-family: inherit;
+	font-size: var(--font-size);
+	vertical-align: text-bottom;
 }
 .container {
-    font-family: var(--font-family);
-    font-size: var(--font-size);
+	font-family: var(--font-family);
+	font-size: var(--font-size);
 }
 
 *::before,
 *::after {
-    color: var(--symbol-color);
+	color: var(--symbol-color);
 }
 :host(:not([key]))>.container.object::before {
-    content: "{";
+	content: "{";
 }
 :host(:not([key]))>.container.array::before {
-    content: "[";
+	content: "[";
 }
 .container.object::after {
-    content: "}";
+	content: "}";
 }
 :host(.comma) .container.object::after {
-    content: "},";
+	content: "},";
 }
 .container.array::after {
-    content: "]";
+	content: "]";
 }
 :host(.comma) .container.array::after {
-    content: "],";
+	content: "],";
 }
 .key {
-    color: var(--key-color);
-    margin-right: 0.5rem;
-    padding: 0;
-    margin: 0;
+	color: var(--key-color);
+	margin-right: 0.5rem;
+	padding: 0;
+	margin: 0;
 
 	&::after {
-    content: ": ";
-}
+		content: ": ";
+	}
 	.object>&::after {
-    content: ": {";
-}
+		content: ": {";
+	}
 	.array>&::after {
-    content: ": [";
+		content: ": [";
 	}
 }
 .key .arrow {
-    width: 1rem;
-    height: 0.75rem;
-    margin-left: -1.25rem;
-    padding-right: 0.25rem;
-    vertical-align: baseline;
+	width: 1rem;
+	height: 0.75rem;
+	margin-left: -1.25rem;
+	padding-right: 0.25rem;
+	vertical-align: baseline;
 }
 .arrow .triangle {
-    fill: var(--symbol-color);
+	fill: var(--symbol-color);
 }
 :is(.value.string, .key-name) {
 	&::before{
-    content: '"';
-}
+		content: '"';
+	}
 	&::after{
-    content: '"';
+		content: '"';
 	}
 }
 .row:has(+ :is([expand][key], .row))::after {
-    content: ",";
+	content: ",";
 }
 .empty.array {
 	margin-inline-start: .5rem;
@@ -209,44 +209,44 @@ button {
 }
 .string,
 .url {
-    color: var(--string-color);
+	color: var(--string-color);
 }
 .number,
 .bigint {
-    color: var(--number-color);
+	color: var(--number-color);
 }
 .null {
-    color: var(--null-color);
+	color: var(--null-color);
 }
 .boolean {
-    color: var(--boolean-color);
+	color: var(--boolean-color);
 }
 .ellipsis {
-    width: 1rem;
-    padding: 0;
-&::after {
-    content: "…";
-}
+	width: 1rem;
+	padding: 0;
+	&::after {
+		content: "…";
+	}
 }
 .triangle {
-    fill: black;
-    stroke: black;
-    stroke-width: 0;
+	fill: black;
+	stroke: black;
+	stroke-width: 0;
 }
 .row {
-    padding-left: var(--indent);
+	padding-left: var(--indent);
 
 	.dragged {
 		opacity: 0.9;
-}
+	}
 
 	& .row {
-    display: table;
-}
+		display: table;
+	}
 
 	& *:not(x-pre-json) {
-    display: inline table;
-}
+		display: inline table;
+	}
 }
   `;
     }
@@ -581,17 +581,17 @@ button {
 							},
 							dragOver = (e) => {
 								if (container.contains(e.target)) e.preventDefault();
-                            const targetRow = e.currentTarget;
-                            const dragged = container.selected;
-                            if (!dragged || dragged === targetRow) return;
+								const targetRow = e.currentTarget;
+								const dragged = container.selected;
+								if (!dragged || dragged === targetRow) return;
 								if (!container.contains(e.currentTarget)) return;
-                            // insert dragged before targetRow when targetRow is before dragged;
-                            // otherwise insert after targetRow
-                            if (isBefore(dragged, targetRow)) {
-                                container.insertBefore(dragged, targetRow);
-                            } else {
-                                container.insertBefore(dragged, targetRow.nextSibling);
-                            }
+								// insert dragged before targetRow when targetRow is before dragged;
+								// otherwise insert after targetRow
+								if (isBefore(dragged, targetRow)) {
+									container.insertBefore(dragged, targetRow);
+								} else {
+									container.insertBefore(dragged, targetRow.nextSibling);
+								}
 							},
 							dargLeave = (e) => {
 								if (container.contains(e.currentTarget))
@@ -599,46 +599,46 @@ button {
 							},
 							dragEnd = () => {
 								container.selected?.classList.remove("dragged");
-                            container.selected = null;
-                            // build new array value from direct .row children
-                            const rows = Array.from(container.querySelectorAll(":scope > .row"));
-                            const newArr = rows.map((r) => {
-                                // prefer nested x-pre-json value if present
-                                const nested = r.querySelector("x-pre-json");
-                                if (nested) {
-                                    try {
-                                        return JSON.parse(nested.textContent ?? "null");
-                                    } catch {
-                                        return nested.textContent ?? null;
-                                    }
-                                }
-                                // otherwise try to parse primitive text content
-                                const txt = (r.textContent ?? "").trim();
-                                try {
-                                    return JSON.parse(txt);
-                                } catch {
-                                    return txt;
-                                }
-                            });
-                            // update this x-pre-json's input/textContent and re-render
-                            self.input = newArr;
-                            self.textContent = JSON.stringify(newArr);
-                            if (typeof self.render === "function") self.render();
-                            // bubble change up to parent if present
-                            const myKey = self.getAttribute("key");
-                            const parentHost = self.getRootNode().host;
-                            if (parentHost && parentHost instanceof xPreJSON && myKey) {
-                                parentHost.handleChildUpdate(myKey, self.input);
-                            }
+								container.selected = null;
+								// build new array value from direct .row children
+								const rows = Array.from(container.querySelectorAll(":scope > .row"));
+								const newArr = rows.map((r) => {
+									// prefer nested x-pre-json value if present
+									const nested = r.querySelector("x-pre-json");
+									if (nested) {
+										try {
+											return JSON.parse(nested.textContent ?? "null");
+										} catch {
+											return nested.textContent ?? null;
+										}
+									}
+									// otherwise try to parse primitive text content
+									const txt = (r.textContent ?? "").trim();
+									try {
+										return JSON.parse(txt);
+									} catch {
+										return txt;
+									}
+								});
+								// update this x-pre-json's input/textContent and re-render
+								self.input = newArr;
+								self.textContent = JSON.stringify(newArr);
+								if (typeof self.render === "function") self.render();
+								// bubble change up to parent if present
+								const myKey = self.getAttribute("key");
+								const parentHost = self.getRootNode().host;
+								if (parentHost && parentHost instanceof xPreJSON && myKey) {
+									parentHost.handleChildUpdate(myKey, self.input);
+								}
 							},
 							isBefore = (el1, el2) => {
-                            if (!el1 || !el2 || el1.parentNode !== el2.parentNode) return false;
-                            let cur = el1.previousSibling;
-                            for (; cur; cur = cur.previousSibling) {
-                                if (cur === el2) return true;
-                            }
-                            return false;
-                        };
+								if (!el1 || !el2 || el1.parentNode !== el2.parentNode) return false;
+								let cur = el1.previousSibling;
+								for (; cur; cur = cur.previousSibling) {
+									if (cur === el2) return true;
+								}
+								return false;
+							};
                         rowContainer.setAttribute("draggable", "true");
                         rowContainer.addEventListener("dragstart", dragStart);
                         rowContainer.addEventListener("dragover", dragOver);
