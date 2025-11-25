@@ -774,8 +774,9 @@ button {
      */
     attributeChangedCallback(name, _oldValue, newValue) {
         switch (name) {
-            case "truncate-string":
             case "editable":
+				this.editable = !!this.hasAttribute("editable");
+            case "truncate-string":
                 this.render();
                 break;
             case "expand":
