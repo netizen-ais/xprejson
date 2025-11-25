@@ -1,0 +1,22 @@
+{
+  "name": "@netizen-ais/xprejson",
+  "version": "1.0.0",
+  "description": "HTML custom element that allows you to render JSON objects in HTML documents with basic editing capabilities, in pure HTML, CSS and JS without any dependencies",
+  "main": "xprejson.js",
+  "scripts": {
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/netizen-ais/xprejson.git"
+  },
+  "keywords": [
+    "HTML",
+    "JSON"
+  ],
+  "author": "Rafael Gawenda",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/netizen-ais/xprejson/issues"
+  },
+  "homepage": "https://github.com/netizen-ais/xprejson#readme"
+}
