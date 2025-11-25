@@ -140,6 +140,7 @@ button {
     font-family: var(--font-family);
     font-size: var(--font-size);
 }
+
 *::before,
 *::after {
     color: var(--symbol-color);
@@ -167,15 +168,16 @@ button {
     margin-right: 0.5rem;
     padding: 0;
     margin: 0;
-}
-.key::after {
+
+	&::after {
     content: ": ";
 }
-.object>.key::after {
+	.object>&::after {
     content: ": {";
 }
-.array>.key::after {
+	.array>&::after {
     content: ": [";
+	}
 }
 .key .arrow {
     width: 1rem;
@@ -187,26 +189,27 @@ button {
 .arrow .triangle {
     fill: var(--symbol-color);
 }
-.value.string::before,
-.key-name::before {
+:is(.value.string, .key-name) {
+	&::before{
     content: '"';
 }
-.value.string::after,
-.key-name::after {
+	&::after{
     content: '"';
+	}
 }
 .row:has(+ :is([expand][key], .row))::after {
     content: ",";
 }
+.empty.array {
+	margin-inline-start: .5rem;
+
+	&::before {
+		content: "[]";
+	}
+}
 .string,
 .url {
     color: var(--string-color);
-}
-.empty.array {
-    margin-inline-start: .5rem;
-}
-.empty.array::before {
-    content: "[]";
 }
 .number,
 .bigint {
@@ -221,9 +224,9 @@ button {
 .ellipsis {
     width: 1rem;
     padding: 0;
-}
-.ellipsis::after {
+&::after {
     content: "…";
+}
 }
 .triangle {
     fill: black;
@@ -232,12 +235,18 @@ button {
 }
 .row {
     padding-left: var(--indent);
+
+	.dragged {
+		opacity: 0.9;
 }
-.row .row {
-    display: block;
+
+	& .row {
+    display: table;
 }
-.row *:not(x-pre-json) {
+
+	& *:not(x-pre-json) {
     display: inline table;
+}
 }
   `;
     }
@@ -560,11 +569,22 @@ button {
                 } else {
                     rowContainer.appendChild(this.createPrimitiveValueElement(value, key));
                     if (isArray && self.editable) {
-                        const dragOver = (e) => {
-                            e.preventDefault();
+						const
+							dragStart = (e) => {
+								// use the row element (currentTarget) as the dragged element
+								container.selected = e.currentTarget;
+								e.dataTransfer.setData("text/plain", "");
+								e.dataTransfer.setDragImage(new Image(0, 0), 0, 0);
+								// e.dataTransfer.effectAllowed = "all";
+								e.dataTransfer.dropEffect = "move";
+								e.currentTarget.classList.add("dragged");
+							},
+							dragOver = (e) => {
+								if (container.contains(e.target)) e.preventDefault();
                             const targetRow = e.currentTarget;
                             const dragged = container.selected;
                             if (!dragged || dragged === targetRow) return;
+								if (!container.contains(e.currentTarget)) return;
                             // insert dragged before targetRow when targetRow is before dragged;
                             // otherwise insert after targetRow
                             if (isBefore(dragged, targetRow)) {
@@ -572,8 +592,13 @@ button {
                             } else {
                                 container.insertBefore(dragged, targetRow.nextSibling);
                             }
-                        };
-                        const dragEnd = () => {
+							},
+							dargLeave = (e) => {
+								if (container.contains(e.currentTarget))
+									e.preventDefault();
+							},
+							dragEnd = () => {
+								container.selected?.classList.remove("dragged");
                             container.selected = null;
                             // build new array value from direct .row children
                             const rows = Array.from(container.querySelectorAll(":scope > .row"));
@@ -605,14 +630,8 @@ button {
                             if (parentHost && parentHost instanceof xPreJSON && myKey) {
                                 parentHost.handleChildUpdate(myKey, self.input);
                             }
-                        };
-                        const dragStart = (e) => {
-                            // use the row element (currentTarget) as the dragged element
-                            container.selected = e.currentTarget;
-                            e.dataTransfer.setData("text/plain", "");
-                            e.dataTransfer.effectAllowed = "move";
-                        };
-                        const isBefore = (el1, el2) => {
+							},
+							isBefore = (el1, el2) => {
                             if (!el1 || !el2 || el1.parentNode !== el2.parentNode) return false;
                             let cur = el1.previousSibling;
                             for (; cur; cur = cur.previousSibling) {
