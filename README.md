@@ -52,7 +52,7 @@ You can customize the rendering of the JSON object by setting the following attr
 
 ### `editable`
 
-By default, the JSON object is only a viewer, set the `editable` attribute (to "" or "true" to allow modification:
+By default, the JSON object is only a viewer, set the `editable` attribute (to "" or "true") to allow modification:
 
 ```html
 <x-pre-json editable>{"hello": {"world": "!"}}</x-pre-json>
@@ -60,7 +60,7 @@ By default, the JSON object is only a viewer, set the `editable` attribute (to "
 
 ### `expand`
 
-By default, the JSON object is rendered expanded up to 1 level deep. You can set the `expand` attribute to a number to expand the JSON object up to that level deep:
+By default, the JSON object is rendered expanded up to 1 level deep (expand="1"). You can set the `expand` attribute to a number to expand the JSON object up to that level deep:
 
 ```html
 <x-pre-json expand="2">{"hello": {"world": "!"}}</x-pre-json>
