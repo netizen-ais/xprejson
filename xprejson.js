@@ -42,7 +42,7 @@ class xPreJSON extends HTMLElement {
      * Show array size when collapsed.
      * @type {boolean}
      */
-    counts = false;
+    arrSize = false;
 
     /**
      * Whether fields are editable by user interaction.
@@ -55,7 +55,7 @@ class xPreJSON extends HTMLElement {
      * @returns {string[]}
      */
     static get observedAttributes() {
-        return ["expand", "key", "truncate-string", "modified", "editable", "counts"];
+        return ["expand", "key", "truncate-string", "modified", "editable", "array-size"];
     }
 
     /**
@@ -550,7 +550,7 @@ data[count] {
             });
             keyElement.addEventListener("click", this.toggle.bind(this));
             container.appendChild(keyElement);
-			if (isArray && this.counts) {
+			if (isArray && this.arrSize) {
 				const countElement = document.createElement("data");
 				countElement.setAttribute("count", object.length);
 				container.appendChild(countElement);
@@ -676,7 +676,7 @@ data[count] {
             xPreJSONElement.setAttribute("truncate-string", String(truncateString)); // Set the truncate-string attribute
             xPreJSONElement.setAttribute("key", key);
             xPreJSONElement.setAttribute("editable", self.editable ? "" : "false");
-            xPreJSONElement.setAttribute("counts", self.counts ? "" : "false");
+            xPreJSONElement.setAttribute("array-size", self.arrSize ? "" : "false");
             xPreJSONElement.classList.toggle(
                 "comma",
                 index < Object.keys(object).length - 1,
@@ -799,8 +799,8 @@ data[count] {
 				this.editable = !!this.hasAttribute("editable");
                 this.render();
                 break;
-            case "counts":
-				this.counts = !!this.hasAttribute("counts");
+            case "array-size":
+				this.arrSize = !!this.hasAttribute("array-size");
                 this.render();
                 break;
             case "truncate-string":

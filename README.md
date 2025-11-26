@@ -35,28 +35,29 @@ Your JSON will be rendered as a human-readable format:
 
 - HTML Custom Element without any dependencies, works in any modern browser
 - No need to install any dependencies or build tools, just drop the script in your HTML and start using it
-- All JSON intrinsic formating symbols (quotes, colon, comma) are delegated to HTML pseudo elements ::before/after and CSS managed
 - Display large JSON objects with expandable and collapsible sections
 - Supports truncating very large strings and arrays with an ellipsis
 - Allows some customization using CSS variables
-- Show element count on arrays
-- Outputs a valid JSON string that can be copied and pasted into a JSON file (in textContent property)
+- All JSON intrinsic formating symbols (quotes, colon, comma) are delegated to HTML pseudo elements ::before/after and CSS managed
+- Show element count on arrays if requested
 - Edit values and sort array elements
+- Updates textContent property and emits an `InputEvent` when edited
 
 ## To-do List
 
+- [ ] Edit boolean values
 - [ ] Add/Delete keys
 
 ## Attributes
 
 You can customize the rendering of the JSON object by setting the following attributes on the `<x-pre-json>` element:
 
-### `counts`
+### `array-size`
 
 Show element count on arrays
 
 ```html
-<x-pre-json counts>{a: [0, 1, 2, "foo"]}</x-pre-json>
+<x-pre-json array-size>{a: [0, 1, 2, "foo"]}</x-pre-json>
 ```
 
 ### `editable`
