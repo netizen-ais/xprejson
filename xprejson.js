@@ -495,13 +495,13 @@ data[count] {
      */
     createTruncatedStringElement(input) {
         const container = document.createElement("div");
-                container.className = "truncated string";
+        container.className = "truncated string";
         const ellipsis = document.createElement("button");
         ellipsis.className = "ellipsis";
 
         ellipsis.addEventListener("click", () => {
 			ellipsis.remove();
-container.classList.remove("truncated");
+			container.classList.remove("truncated");
 			container.childNodes[0].textContent = input;
         }, {once: true});
 
@@ -671,8 +671,16 @@ container.classList.remove("truncated");
             xPreJSONElement.setAttribute("expand", String(expand - 1));
             xPreJSONElement.setAttribute("truncate-string", String(truncateString)); // Set the truncate-string attribute
             xPreJSONElement.setAttribute("key", key);
-            xPreJSONElement.setAttribute("editable", self.editable ? "" : "false");
-            xPreJSONElement.setAttribute("array-size", self.arrSize ? "" : "false");
+			if (self.editable) {
+				xPreJSONElement.setAttribute("editable", "");
+			} else {
+				xPreJSONElement.removeAttribute("editable");
+			}
+			if (self.arrSize) {
+				xPreJSONElement.setAttribute("array-size", "");
+			} else {
+				xPreJSONElement.removeAttribute("array-size");
+			}
             xPreJSONElement.classList.toggle(
                 "comma",
                 index < Object.keys(object).length - 1,
