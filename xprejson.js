@@ -177,7 +177,7 @@ data[count] {
 	margin: 0;
 
 	&::after {
-		content: ": ";
+		content: ":" " ";
 	}
 	.object>&::after {
 		content: ": {";
@@ -204,9 +204,12 @@ data[count] {
 .arrow .triangle {
 	fill: var(--symbol-color);
 }
+.value:is(.boolean, .null, .number, .bigint)::before {
+	content: " ";
+}
 :is(.value.string, .key-name) {
 	&::before{
-		content: '"';
+		content: " " '"';
 	}
 	&::after{
 		content: '"';
@@ -260,7 +263,11 @@ data[count] {
 	}
 
 	& *:not(x-pre-json) {
-		display: contents;
+		display: inline table;
+	}
+
+	& :is(div[key], div[key] > .string) {
+		display: inline;
 	}
 }
   `;
