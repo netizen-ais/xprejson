@@ -495,13 +495,13 @@ data[count] {
      */
     createTruncatedStringElement(input) {
         const container = document.createElement("div");
-        container.dataset.expandedTimes = "1";
-        container.className = "truncated string";
+                container.className = "truncated string";
         const ellipsis = document.createElement("button");
         ellipsis.className = "ellipsis";
 
         ellipsis.addEventListener("click", () => {
 			ellipsis.remove();
+container.classList.remove("truncated");
 			container.childNodes[0].textContent = input;
         }, {once: true});
 
