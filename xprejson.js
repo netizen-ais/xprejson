@@ -260,7 +260,7 @@ data[count] {
 	}
 
 	& *:not(x-pre-json) {
-		display: inline table;
+		display: contents;
 	}
 }
   `;
@@ -494,20 +494,9 @@ data[count] {
         ellipsis.className = "ellipsis";
 
         ellipsis.addEventListener("click", () => {
-            const expandedTimes = Number.parseInt(
-                container.dataset.expandedTimes ?? "1",
-            );
-            container.dataset.expandedTimes = String(expandedTimes + 1);
-            const expandedString = input.slice(
-                expandedTimes * this.truncateStringAttributeValue,
-                (expandedTimes + 1) * this.truncateStringAttributeValue,
-            );
-            const textChild = container.childNodes[0];
-            textChild.textContent += expandedString;
-            if (textChild.textContent === input) {
-                ellipsis.remove();
-            }
-        });
+			ellipsis.remove();
+			container.childNodes[0].textContent = input;
+        }, {once: true});
 
         container.append(
             input.slice(0, this.truncateStringAttributeValue),
