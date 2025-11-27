@@ -269,6 +269,13 @@ data[count] {
 	& :is(div[key], div[key] > .string) {
 		display: inline;
 	}
+
+	& fieldset {
+		border: none;
+		padding: 0;
+		margin: 0;
+		display: inline;
+	}
 }
   `;
     }
@@ -394,97 +401,139 @@ data[count] {
         } else {
             container.textContent = JSON.stringify(input);
         }
-        if (this.editable) container.addEventListener("click", (event) => {
-            event.stopPropagation();
-            const
-                key = container.getAttribute("key"),
-                host = container.getRootNode().host;
-            // make editable
-            // save original displayed text so Escape can revert
-            const originalText = container.textContent ?? "";
-            container.setAttribute("contenteditable", "");
-            // handle live edits
-            const onInput = (ev) => {
-                const newText = container.textContent ?? "";
-                // preserve string semantics: if original was string, keep as string;
-                // otherwise try to parse JSON to keep types (number, boolean, null, etc.)
-                let parsed;
-                if (type === "string") {
-                    parsed = newText;
-                } else {
-                    try {
-                        parsed = JSON.parse(newText);
-                    } catch {
-                        parsed = newText;
-                    }
-                }
-                // update host.input and propagate up via handleChildUpdate when available
-                if (host && typeof host.handleChildUpdate === "function" && key) {
-                    host.handleChildUpdate(key, parsed);
-                } else if (host) {
-                    // fallback: update host textContent directly
-                    host.input = host.input ?? {};
-                    host.input[key] = parsed;
-                    host.textContent = JSON.stringify(host.input);
-                    host.setAttribute("modified", key);
-                }
-            };
-            container.addEventListener("input", onInput);
-            // handle Enter / Escape keys to end or cancel edit and don't propagate
-            const onKeyDown = (e) => {
-                if (e.key === "Enter") {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    // finish editing (commit already applied via input events)
-                    container.removeAttribute("contenteditable");
-                    container.removeEventListener("input", onInput);
-                    container.removeEventListener("keydown", onKeyDown);
-                    window.removeEventListener("click", onWindowClick);
-                } else if (e.key === "Escape") {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    // revert to original value
-                    container.textContent = originalText;
-                    // update host with reverted value
-                    let reverted;
-                    if (type === "string") {
-                        reverted = originalText;
-                    } else {
-                        try {
-                            reverted = JSON.parse(originalText);
-                        } catch {
-                            reverted = originalText;
-                        }
-                    }
-                    if (host && typeof host.handleChildUpdate === "function" && key) {
-                        host.handleChildUpdate(key, reverted);
-                    } else if (host) {
-                        host.input = host.input ?? {};
-                        host.input[key] = reverted;
-                        host.textContent = JSON.stringify(host.input);
-                        host.setAttribute("modified", key);
-                    }
-                    container.removeAttribute("contenteditable");
-                    container.removeEventListener("input", onInput);
-                    container.removeEventListener("keydown", onKeyDown);
-                    window.removeEventListener("click", onWindowClick);
-                } else {
-                    // any key while editing shouldn't propagate to ancestors
-                    e.stopPropagation();
-                }
-            };
-            container.addEventListener("keydown", onKeyDown);
-            // remove contenteditable on outside clicks
-            const onWindowClick = (evt) => {
-                if (!container.contains(evt.target)) {
-                    container.removeAttribute("contenteditable");
-                    container.removeEventListener("input", onInput);
-                    container.removeEventListener("keydown", onKeyDown);
-                    window.removeEventListener("click", onWindowClick);
-                }
-            };
-            window.addEventListener("click", onWindowClick);
-        });
+        if (this.editable) {
+			switch (type) {
+				case "string":
+				case "number":
+				case "bigint":
+					container.addEventListener("click", (event) => {
+						event.stopPropagation();
+						const
+							key = container.getAttribute("key"),
+							host = container.getRootNode().host;
+						// make editable
+						// save original displayed text so Escape can revert
+						const originalText = container.textContent ?? "";
+						container.setAttribute("contenteditable", "");
+						// handle live edits
+						const onInput = (ev) => {
+							const newText = container.textContent ?? "";
+							// preserve string semantics: if original was string, keep as string;
+							// otherwise try to parse JSON to keep types (number, boolean, null, etc.)
+							let parsed;
+							if (type === "string") {
+								parsed = newText;
+							} else {
+								try {
+									parsed = JSON.parse(newText);
+								} catch {
+									parsed = newText;
+								}
+							}
+							// update host.input and propagate up via handleChildUpdate when available
+							if (host && typeof host.handleChildUpdate === "function" && key) {
+								host.handleChildUpdate(key, parsed);
+							} else if (host) {
+								// fallback: update host textContent directly
+								host.input = host.input ?? {};
+								host.input[key] = parsed;
+								host.textContent = JSON.stringify(host.input);
+								host.setAttribute("modified", key);
+							}
+						};
+						container.addEventListener("input", onInput);
+						// handle Enter / Escape keys to end or cancel edit and don't propagate
+						const onKeyDown = (e) => {
+							if (e.key === "Enter") {
+								e.preventDefault();
+								e.stopPropagation();
+								// finish editing (commit already applied via input events)
+								container.removeAttribute("contenteditable");
+								container.removeEventListener("input", onInput);
+								container.removeEventListener("keydown", onKeyDown);
+								window.removeEventListener("click", onWindowClick);
+							} else if (e.key === "Escape") {
+								e.preventDefault();
+								e.stopPropagation();
+								// revert to original value
+								container.textContent = originalText;
+								// update host with reverted value
+								let reverted;
+								if (type === "string") {
+									reverted = originalText;
+								} else {
+									try {
+										reverted = JSON.parse(originalText);
+									} catch {
+										reverted = originalText;
+									}
+								}
+								if (host && typeof host.handleChildUpdate === "function" && key) {
+									host.handleChildUpdate(key, reverted);
+								} else if (host) {
+									host.input = host.input ?? {};
+									host.input[key] = reverted;
+									host.textContent = JSON.stringify(host.input);
+									host.setAttribute("modified", key);
+								}
+								container.removeAttribute("contenteditable");
+								container.removeEventListener("input", onInput);
+								container.removeEventListener("keydown", onKeyDown);
+								window.removeEventListener("click", onWindowClick);
+							} else {
+								// any key while editing shouldn't propagate to ancestors
+								e.stopPropagation();
+							}
+						};
+						container.addEventListener("keydown", onKeyDown);
+						// remove contenteditable on outside clicks
+						const onWindowClick = (evt) => {
+							if (!container.contains(evt.target)) {
+								container.removeAttribute("contenteditable");
+								container.removeEventListener("input", onInput);
+								container.removeEventListener("keydown", onKeyDown);
+								window.removeEventListener("click", onWindowClick);
+							}
+						};
+						window.addEventListener("click", onWindowClick);
+					});
+					break;
+				case "boolean":
+					container.addEventListener("click", (event) => {
+						event.stopPropagation();
+						container.dataset.value = input.toString();
+						const
+							fieldset = document.createElement("fieldset"),
+							trueEl = document.createElement("input"),
+							falseEl = document.createElement("input"),
+							radioGroup = [trueEl, falseEl];
+
+						radioGroup.forEach((el, index) => {
+							el.setAttribute("type", "radio");
+							el.setAttribute("name", key);
+							el.value = (!index).toString();
+							el.checked = el.value === input.toString();
+							const label = document.createElement("label");
+							label.textContent = (!index).toString();
+							fieldset.appendChild(label);
+							fieldset.appendChild(el);
+							container.textContent = "";
+							window.addEventListener("click", (e) => {
+								if (!container.contains(e.target)) {
+									// remove fieldset and restore text content
+									container.textContent = container.dataset.value ?? "";
+									fieldset.remove();
+								}
+							});
+						});
+						container.appendChild(fieldset);
+					});
+					break;
+				case "null":
+				default:
+					return container;
+			}
+		}
         return container;
     }
 
