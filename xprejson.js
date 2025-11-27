@@ -262,6 +262,7 @@ data[count] {
 		display: table;
 	}
 
+
 	& *:not(x-pre-json) {
 		display: inline table;
 	}
@@ -270,11 +271,25 @@ data[count] {
 		display: inline;
 	}
 
-	& fieldset {
-		border: none;
-		padding: 0;
-		margin: 0;
-		display: inline;
+	& > .boolean {
+		& > options {
+			border: none;
+			padding: 0;
+			margin: 0;
+			display: inline;
+			font-size: smaller;
+			max-height: .9em;
+
+			& > option {
+				margin-inline: .5em;
+				&.selected {
+					font-weight: bold;
+				}
+				&:not(.selected) {
+					opacity: 0.7;
+				}
+			}
+		}
 	}
 }
   `;
@@ -431,15 +446,8 @@ data[count] {
 								}
 							}
 							// update host.input and propagate up via handleChildUpdate when available
-							if (host && typeof host.handleChildUpdate === "function" && key) {
+							if (host)
 								host.handleChildUpdate(key, parsed);
-							} else if (host) {
-								// fallback: update host textContent directly
-								host.input = host.input ?? {};
-								host.input[key] = parsed;
-								host.textContent = JSON.stringify(host.input);
-								host.setAttribute("modified", key);
-							}
 						};
 						container.addEventListener("input", onInput);
 						// handle Enter / Escape keys to end or cancel edit and don't propagate
@@ -468,14 +476,8 @@ data[count] {
 										reverted = originalText;
 									}
 								}
-								if (host && typeof host.handleChildUpdate === "function" && key) {
+								if (host)
 									host.handleChildUpdate(key, reverted);
-								} else if (host) {
-									host.input = host.input ?? {};
-									host.input[key] = reverted;
-									host.textContent = JSON.stringify(host.input);
-									host.setAttribute("modified", key);
-								}
 								container.removeAttribute("contenteditable");
 								container.removeEventListener("input", onInput);
 								container.removeEventListener("keydown", onKeyDown);
@@ -500,33 +502,40 @@ data[count] {
 					break;
 				case "boolean":
 					container.addEventListener("click", (event) => {
-						event.stopPropagation();
-						container.dataset.value = input.toString();
 						const
-							fieldset = document.createElement("fieldset"),
-							trueEl = document.createElement("input"),
-							falseEl = document.createElement("input"),
-							radioGroup = [trueEl, falseEl];
+							host = container.getRootNode().host;
+						event.stopPropagation();
+						container.setAttribute("value", input.toString());
+						const
+							options = document.createElement("options");
 
-						radioGroup.forEach((el, index) => {
-							el.setAttribute("type", "radio");
-							el.setAttribute("name", key);
-							el.value = (!index).toString();
-							el.checked = el.value === input.toString();
-							const label = document.createElement("label");
-							label.textContent = (!index).toString();
-							fieldset.appendChild(label);
-							fieldset.appendChild(el);
+						for (let i = 0; i < 2; i++) {
+							const
+								option = document.createElement("option");
+
+							option.textContent = (!i).toString();
+							option.classList.toggle("selected", option.textContent === input.toString());
+							options.appendChild(option);
+
+							option.addEventListener("click", (event) => {
+								event.stopPropagation();
+								options.remove();
+								container.removeAttribute("value");
+								container.textContent = option.textContent;
+								input = option.textContent == "true";
+								host.handleChildUpdate(key, input);
+							}/* , { once: true } */);
+
 							container.textContent = "";
 							window.addEventListener("click", (e) => {
 								if (!container.contains(e.target)) {
-									// remove fieldset and restore text content
+									// remove options and restore text content
 									container.textContent = container.dataset.value ?? "";
-									fieldset.remove();
+									options.remove();
 								}
 							});
-						});
-						container.appendChild(fieldset);
+						}
+						container.appendChild(options);
 					});
 					break;
 				case "null":
