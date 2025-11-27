@@ -55,7 +55,7 @@ class xPreJSON extends HTMLElement {
      * @returns {string[]}
      */
     static get observedAttributes() {
-        return ["expand", "key", "truncate-string", "modified", "editable", "array-size"];
+        return ["expand", "key", "truncate-string", "modified", "editable", "array-size", "hide-key"];
     }
 
     /**
@@ -152,11 +152,14 @@ button {
 data[count] {
 	color: var(--symbol-color);
 }
-:host(:not([key]))>.container.object::before {
-	content: "{";
-}
-:host(:not([key]))>.container.array::before {
-	content: "[";
+:host(:not([key])),
+:host([hide-key]) {
+	& > .container.object::before {
+		content: "{";
+	}
+	& > .container.array::before {
+		content: "[";
+	}
 }
 .container.object::after {
 	content: "}";
@@ -528,12 +531,12 @@ data[count] {
 
 							container.textContent = "";
 							window.addEventListener("click", (e) => {
-								if (!container.contains(e.target)) {
+								if (!container.contains(e.target) && container.contains(options)) {
 									// remove options and restore text content
-									container.textContent = container.dataset.value ?? "";
+									container.textContent = options.querySelector('.selected').textContent ?? "";
 									options.remove();
 								}
-							});
+							}, { once: true });
 						}
 						container.appendChild(options);
 					});
@@ -598,12 +601,14 @@ data[count] {
         if (objectKeyName) {
             // if objectKeyName is provided, then it is a row
             container.classList.add("row");
-            const keyElement = this.createKeyElement(objectKeyName, {
-                withArrow: true,
-                expanded: this.isExpanded,
-            });
-            keyElement.addEventListener("click", this.toggle.bind(this));
-            container.appendChild(keyElement);
+            if (!this.hasAttribute("hide-key")) {
+                const keyElement = this.createKeyElement(objectKeyName, {
+                    withArrow: true,
+                    expanded: this.isExpanded,
+                });
+                keyElement.addEventListener("click", this.toggle.bind(this));
+                container.appendChild(keyElement);
+            }
 			if (isArray && this.arrSize) {
 				const countElement = document.createElement("data");
 				countElement.setAttribute("count", object.length);
@@ -734,11 +739,14 @@ data[count] {
 			} else {
 				xPreJSONElement.removeAttribute("editable");
 			}
-			if (self.arrSize) {
-				xPreJSONElement.setAttribute("array-size", "");
-			} else {
-				xPreJSONElement.removeAttribute("array-size");
-			}
+            if (self.arrSize) {
+                xPreJSONElement.setAttribute("array-size", "");
+            } else {
+                xPreJSONElement.removeAttribute("array-size");
+            }
+            if (isArray) {
+                xPreJSONElement.setAttribute("hide-key", "");
+            }
             xPreJSONElement.classList.toggle(
                 "comma",
                 index < Object.keys(object).length - 1,
@@ -866,6 +874,7 @@ data[count] {
                 this.render();
                 break;
             case "truncate-string":
+            case "hide-key":
                 this.render();
                 break;
             case "expand":
