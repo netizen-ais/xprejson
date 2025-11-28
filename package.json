@@ -5,6 +5,12 @@
   "main": "xprejson.js",
   "scripts": {
   },
+  "files": [
+	"xprejson.js",
+	"xprejson.min.js",
+	"README.md"
+  ],
+  "exports": "./xprejson.min.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/netizen-ais/xprejson.git"

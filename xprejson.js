@@ -134,6 +134,9 @@ class xPreJSON extends HTMLElement {
 	--font-size: ${variables.fontSize};
 	--font-family: ${variables.fontFamily};
 }
+* {
+	box-sizing: border-box;
+}
 button {
 	border: none;
 	background: transparent;
@@ -275,21 +278,26 @@ data[count] {
 	}
 
 	& > .boolean {
-		& > options {
+		& > div#options {
 			border: none;
 			padding: 0;
 			margin: 0;
 			display: inline;
-			font-size: smaller;
-			max-height: .9em;
 
-			& > option {
-				margin-inline: .5em;
+			& > a.option {
+				padding-inline: 0.25rem;
+				height: .9em;
+				line-height: .9em;
+				cursor: pointer;
+
 				&.selected {
 					font-weight: bold;
 				}
 				&:not(.selected) {
-					opacity: 0.7;
+					font-size: 0.9em;
+				}
+				&:has(+ a.option) {
+					border-inline-end: 1px dotted var(--symbol-color);
 				}
 			}
 		}
@@ -510,13 +518,17 @@ data[count] {
 						event.stopPropagation();
 						container.setAttribute("value", input.toString());
 						const
-							options = document.createElement("options");
+							options = Object.assign(document.createElement('div'), {
+								id: 'options'
+							});
 
 						for (let i = 0; i < 2; i++) {
 							const
-								option = document.createElement("option");
+								option = Object.assign(document.createElement("a"), {
+									className: "option",
+									textContent: (!i).toString(),
+								});
 
-							option.textContent = (!i).toString();
 							option.classList.toggle("selected", option.textContent === input.toString());
 							options.appendChild(option);
 
@@ -527,17 +539,26 @@ data[count] {
 								container.textContent = option.textContent;
 								input = option.textContent == "true";
 								host.handleChildUpdate(key, input);
-							}/* , { once: true } */);
+							});
 
-							container.textContent = "";
+							options.addEventListener("mouseleave", () => {
+								options.remove();
+								container.textContent = input.toString();
+								container.removeAttribute("value");
+							}, {
+								once: true
+							});
 							window.addEventListener("click", (e) => {
 								if (!container.contains(e.target) && container.contains(options)) {
 									// remove options and restore text content
 									container.textContent = options.querySelector('.selected').textContent ?? "";
 									options.remove();
 								}
-							}, { once: true });
+							}, {
+								once: true
+							});
 						}
+						container.textContent = "";
 						container.appendChild(options);
 					});
 					break;

@@ -45,7 +45,8 @@ Your JSON will be rendered as a human-readable format:
 
 ## To-do List
 
-- [ ] Edit boolean values
+- [X] Edit boolean values
+- [X] Hide (index) keys for array of objects
 - [ ] Add/Delete keys
 
 ## Attributes
