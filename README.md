@@ -1,5 +1,5 @@
-![NPM Version](https://img.shields.io/npm/v/%40netizen-ais%2Fxprejson?logo=npm&color=white)
-
+### <p align="right">![MIT License](https://badgen.net/static/license/MIT/grey) ![NPM Version](https://badgen.net/npm/v/@netizen-ais/xprejson?color=green)</p>
+###
 # `<x-pre-json>` JSON viewer/editor Custom HTML Element
 
 `<x-pre-json>` is an HTML custom element that allows you to render JSON objects in HTML documents with human-readable formatting and expandable interaction for browsing deep JSON structures, edit values and sort arrays.
