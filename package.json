@@ -1,6 +1,6 @@
 {
   "name": "@netizen-ais/xprejson",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "HTML custom element that allows you to render JSON objects in HTML documents with basic editing capabilities, in pure HTML, CSS and JS without any dependencies",
   "main": "xprejson.js",
   "scripts": {
