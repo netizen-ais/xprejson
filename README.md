@@ -1,3 +1,5 @@
+![NPM Version](https://img.shields.io/npm/v/%40netizen-ais%2Fxprejson?logo=npm&color=white)
+
 # `<x-pre-json>` JSON viewer/editor Custom HTML Element
 
 `<x-pre-json>` is an HTML custom element that allows you to render JSON objects in HTML documents with human-readable formatting and expandable interaction for browsing deep JSON structures, edit values and sort arrays.
@@ -5,13 +7,30 @@
 It uses only plain HTML/CSS/Js and has no dependencies.
 
 It's based on [`mohsen1's pretty-json`](https://github.com/mohsen1/pretty-json) custom viewer element.
+## Installation
+
+```bash
+npm install @netizen-ais/xprejson
+```
+
 ## Usage
 
-Include [`index.js`](https://github.com/netizen-ais/xprejson/blob/main/index.js) in your HTML page and use the HTML custom element as follows:
+### CDN
+
+```html
+<script type="module" src="https://unpkg.com/@netizen-ais/xprejson/xprejson.min.js"></script>
+```
+
+### NPM
+
+```javascript
+import '@netizen-ais/xprejson';
+```
+
+### Example
 
 <!-- prettier-ignore-start -->
 ```html
-<script type="module" defer src="index.js"></script>
 <x-pre-json>
 {
   "hello": "world",
